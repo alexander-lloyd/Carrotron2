@@ -57,24 +57,24 @@ class FirmataUSBSerial(BaseFirmata):
         logger.debug("Stream Opened on port: {port}".format(port=self.address))
         buffer = []
         while not self.event.is_set():
-            print(self.serial.inWaiting())
-            if self.serial.inWaiting():
-                data = self.serial.read() # TODO: Receive a chunk of data
-                buffer.append(data)
+            buffer_size = self.serial.inWaiting()
+            print("Buffer size: ", buffer_size)
+            if buffer_size:
+                data_stream = self.serial.read(buffer_size) # TODO: Receive a chunk of data
+                buffer.extend(data_stream)
 
             if len(buffer) > 0:
                 # logger.debug("Read from Serial: {}".format(buffer))
                 self.handle_message(buffer) # TODO If we read half way through message we'll cut it in half
                 buffer.clear()
 
-            time.sleep(0.001)
+            time.sleep(0.01)
         self.serial.close()
 
 
     def handle_message(self, buffer):
         logger.debug("Handling: {}".format(buffer))
-        int_buffer = map(ord, buffer)
-        for byte in int_buffer:
+        for byte in buffer:
             if len(self.currentBuffer) == 0 and byte == 0:
                 # Suspect this might cause issues if the currentBuffer is empty?
                 continue  # Don't put  0 as the first byte on the buffer
@@ -413,6 +413,6 @@ def test_stepper():
         time.sleep(2)
 
 if __name__ == '__main__':
-    logger.setLevel(logging.WARN)
+    logger.setLevel(logging.DEBUG)
     logger.addHandler(logging.StreamHandler())
     test_read()
