@@ -38,12 +38,12 @@ const About = () => (
         </Card>
         <Card className='small'
            header={<CardTitle image='img/alexl.jpg'><div style={{color: '#000'}}>Alex Lloyd</div></CardTitle>}
-           actions={[<a href='https://harryrbrown.github.io'>My website</a>]}>
+           actions={[<a href='https://github.com/alexander-lloyd'>Github</a>]}>
            Second-year Computer Science student at the University of Birmingham.
         </Card>
         <Card className='small'
-           header={<CardTitle image='img/sample-1.jpg'>Chris Lloyd</CardTitle>}
-           actions={[<a href='https://harryrbrown.github.io'>My website</a>]}>
+           header={<CardTitle image='img/chrisl.jpg'>Chris Lloyd</CardTitle>}
+           actions={[<a href='https://github.com/terimater2'>Github</a>]}>
            First-year Visual Effects student at Birmingham City University.
         </Card>
     </div>
