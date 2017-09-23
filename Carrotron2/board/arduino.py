@@ -49,7 +49,7 @@ class FirmataUSBSerial(BaseFirmata):
         buffer = []
         while not self.event.is_set():
             if self.serial.inWaiting():
-                data = self.serial.read()
+                data = self.serial.read() # TODO: Receive a chunk of data
                 buffer.append(data)
 
             if len(buffer) > 0:
@@ -57,7 +57,7 @@ class FirmataUSBSerial(BaseFirmata):
                 self.handle_message(buffer) # TODO If we read half way through message we'll cut it in half
                 buffer.clear()
 
-            time.sleep(0.05)
+            time.sleep(0.005)
         self.serial.close()
 
 
@@ -210,7 +210,30 @@ class ArduinoBoard(Board):
         Returns:
             None
         """
-        pass
+        if pin > 15:
+            data = [
+                FirmataCommands.EXTENDED_ANALOG,
+                pin,
+                value & 0x7F,
+                (value >> 0x7F)
+            ]
+            if value > 0x00004000:
+                data.append((value >> 14) & 0x7F)
+            if value > 0x00200000:
+                data.append((value >> 21) & 0x7F)
+            if value > 0x10000000:
+                data.append((value >> 28) & 0x7F)
+            self.__write_sysex(data)
+        else:
+            data = [
+                FirmataCommands.ANALOG_MESSAGE | pin,
+                value & 0x7F,
+                (value >> 7) & 0x7F
+            ]
+            self.__write(data)
+
+    servo_write = analog_write
+    pwm_write = analog_write
 
     def digital_read(self, pin):
         """Read the value of an digital pin
@@ -260,17 +283,36 @@ class ArduinoBoard(Board):
             mode
         ])
 
+    def get_capability(self):
+        # Warning this takes a long time to receive all the data
+        self.__write_sysex([FirmataCommands.CAPABILITY_QUERY])
+
     def __write(self, data):
         logger.debug("Writing: {data}".format(data=data))
         self.stream.write(data)
 
     def __write_sysex(self, data):
         sysex = [FirmataCommands.START_SYSEX] + data + [FirmataCommands.END_SYSEX]
+        print(sysex)
         self.__write(sysex)
+
+    def servo_config(self, pin, min_pulse=544, max_pulse=4000):
+        self.__write_sysex([
+            FirmataCommands.SERVO_CONFIG,
+            pin,
+            min_pulse & 0x7F,
+            (min_pulse >> 7) & 0x7F,
+            max_pulse & 0x7F,
+            (max_pulse >> 7) & 0x7F,
+        ])
+
 
 def test_read():
     arduino = ArduinoBoard('COM3')
-    time.sleep(5)
+
+
+def test_write():
+    arduino = ArduinoBoard('COM3')
     arduino.set_pin_mode(13, FirmataCommands.MODES.get('OUTPUT'))
     while True:
         arduino.digital_write(13, True)
@@ -278,8 +320,26 @@ def test_read():
         arduino.digital_write(13, False)
         time.sleep(0.5)
 
+def test_capability():
+    arduino = ArduinoBoard('COM3')
+    time.sleep(5)
+    arduino.get_capability()
+
+def test_servo():
+    arduino = ArduinoBoard('COM3')
+    time.sleep(5)
+    arduino.servo_config(7, min_pulse=500, max_pulse=2400)
+    time.sleep(1)
+    arduino.servo_write(7, 0)
+    time.sleep(1)
+    arduino.servo_write(7, 90)
+    time.sleep(1)
+    arduino.servo_write(7, 180)
+    time.sleep(1)
+    arduino.servo_write(7, 90)
+
 
 if __name__ == '__main__':
     logger.setLevel(logging.DEBUG)
     logger.addHandler(logging.StreamHandler())
-    test_read()
+    test_servo()
