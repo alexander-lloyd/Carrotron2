@@ -97,6 +97,9 @@ class FirmataCommands:
         'FOUR_WIRE': 4
     }
 
+    HIGH = 1
+    LOW = 0
+
 
 class Board(ABC):
     """Interface of methods required by sensors"""

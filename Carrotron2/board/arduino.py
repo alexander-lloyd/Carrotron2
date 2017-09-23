@@ -10,11 +10,19 @@ from Carrotron2.board.base import Board, FirmataCommands
 
 logger = logging.getLogger(__name__)
 
+class Pin:
+    def __init__(self, pin):
+        self.pin = pin
+        self.value = 0
+        self.reporting = False
+
+
 
 class BaseFirmata(Thread):
-    def __init__(self, address):
+    def __init__(self, address, board):
         super(BaseFirmata, self).__init__()
         self.address = address
+        self.board = board
         self.event = Event()
 
     @abstractmethod
@@ -27,8 +35,8 @@ class BaseFirmata(Thread):
 
 
 class FirmataUSBSerial(BaseFirmata):
-    def __init__(self, address, baud_rate=57600):
-        super(FirmataUSBSerial, self).__init__(address)
+    def __init__(self, address, board, baud_rate=57600):
+        super(FirmataUSBSerial, self).__init__(address, board)
         self.serial = Serial(address, baudrate=baud_rate)
         self.currentBuffer = []
         self.version_received = False
@@ -49,6 +57,7 @@ class FirmataUSBSerial(BaseFirmata):
         logger.debug("Stream Opened on port: {port}".format(port=self.address))
         buffer = []
         while not self.event.is_set():
+            print(self.serial.inWaiting())
             if self.serial.inWaiting():
                 data = self.serial.read() # TODO: Receive a chunk of data
                 buffer.append(data)
@@ -58,7 +67,7 @@ class FirmataUSBSerial(BaseFirmata):
                 self.handle_message(buffer) # TODO If we read half way through message we'll cut it in half
                 buffer.clear()
 
-            time.sleep(0.005)
+            time.sleep(0.001)
         self.serial.close()
 
 
@@ -137,11 +146,13 @@ class FirmataUSBSerial(BaseFirmata):
             pin=pin, value=value
         ))
 
+        self.board.analog_pins[pin].value = value
+
 
 
 class FirmataSocket(BaseFirmata):
-    def __init__(self, address):
-        super(FirmataSocket, self).__init__(address)
+    def __init__(self, address, board):
+        super(FirmataSocket, self).__init__(address, board)
 
     def write(self, data):
         pass
@@ -183,11 +194,16 @@ class ArduinoBoard(Board):
         self.type = connection_type
 
         if self.type == ArduinoBoard.SERIAL:  # TODO: Change into dict
-            self.stream = FirmataUSBSerial(address)
+            self.stream = FirmataUSBSerial(address, self)
         elif self.type == ArduinoBoard.ETHERNET:
-            self.stream = FirmataSocket(address)
+            self.stream = FirmataSocket(address, self)
         else:
             raise IOError("Unsupported connection type")
+
+        self.analog_pins = [Pin(i) for i in range(16)] # TODO: Change depending on board
+        self.digital_pins = [Pin(i) for i in range(54)]
+
+        time.sleep(2) # Give Firmata some time to setup
 
     def analog_read(self, pin):
         """Read the value of an analogue pin
@@ -199,7 +215,15 @@ class ArduinoBoard(Board):
             int in range 0 - 1023 (10 bit accuracy)
 
         """
-        pass
+        pin = self.analog_pins[pin]
+
+        if not pin.reporting:
+            self.__write([
+                FirmataCommands.REPORT_ANALOG | (pin.pin & 0x0F),
+                FirmataCommands.HIGH
+            ])
+            pin.reporting = True
+        return pin.value
 
     def analog_write(self, pin, value):
         """Set the value of an analogue pin
@@ -346,8 +370,10 @@ class ArduinoBoard(Board):
 
 def test_read():
     arduino = ArduinoBoard('COM3')
-    for _ in range(20):
-        print(arduino.analog_read())
+    for _ in range(100):
+        # print(arduino.analog_read(0))
+        arduino.analog_read(0)
+        time.sleep(1)
 
 
 def test_write():
@@ -387,6 +413,6 @@ def test_stepper():
         time.sleep(2)
 
 if __name__ == '__main__':
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(logging.WARN)
     logger.addHandler(logging.StreamHandler())
-    test_stepper()
+    test_read()
