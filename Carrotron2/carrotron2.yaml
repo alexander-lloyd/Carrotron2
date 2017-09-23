@@ -30,7 +30,7 @@ Robot:
 
   board: "mega"
   Controllers: ""
-    # webapp or controller
+    # web app or controller
 
   sensors:
     Ultrasound:
