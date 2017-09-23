@@ -23,6 +23,24 @@
   font-size: large;
 }
 
+.About {
+  width: 700px;
+  margin: auto;
+}
+
+.cards {
+  width: 700px;
+  margin: auto;
+}
+
+nav .brand-logo {
+  margin-left: 20px;
+}
+
+nav ul {
+  margin-right: 20px;
+}
+
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
