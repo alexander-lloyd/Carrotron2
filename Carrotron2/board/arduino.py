@@ -1,5 +1,6 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 import logging
+import math
 from threading import Thread, Event
 import time
 
@@ -293,7 +294,6 @@ class ArduinoBoard(Board):
 
     def __write_sysex(self, data):
         sysex = [FirmataCommands.START_SYSEX] + data + [FirmataCommands.END_SYSEX]
-        print(sysex)
         self.__write(sysex)
 
     def servo_config(self, pin, min_pulse=544, max_pulse=4000):
@@ -306,9 +306,48 @@ class ArduinoBoard(Board):
             (max_pulse >> 7) & 0x7F,
         ])
 
+    # Stepper Functions
+    def stepper_config(self, stepper_id, stepper_type, steps_per_rev, pins):
+        assert stepper_type == len(pins)
+        # 4 Wire Stepper type has a value of 4 etc. Check we get the right number of pins in list
+
+        data = [
+            FirmataCommands.STEPPER,
+            FirmataCommands.STEPPER_CONFIG,
+            stepper_id,
+            stepper_type,
+            steps_per_rev & 0x7E,
+            (steps_per_rev >> 7) & 0x7F,
+        ]
+        data += pins
+
+        self.__write_sysex(data)
+
+    def stepper_step(self, stepper_id, direction, steps, speed, accel=0, decel=0):
+        data = [
+            FirmataCommands.STEPPER,
+            FirmataCommands.STEPPER_STEP,
+            stepper_id,
+            direction,  # TODO: Direction does not seem to change
+            steps & 0x7F,
+            (steps >> 7) & 0x7F,
+            (steps >> 14) & 0x7F,
+            speed & 0x7F,
+            (speed >> 7) & 0x7F
+        ]
+        if (accel > 0 or decel > 0):
+            data.extend(
+                [
+                    accel & 0x7F, (accel >> 7) & 0x7F,
+                    decel & 0x7F, (decel >> 7) & 0x7F
+                ])
+        self.__write_sysex(data)
+
 
 def test_read():
     arduino = ArduinoBoard('COM3')
+    for _ in range(20):
+        print(arduino.analog_read())
 
 
 def test_write():
@@ -338,8 +377,16 @@ def test_servo():
     time.sleep(1)
     arduino.servo_write(7, 90)
 
+def test_stepper():
+    arduino = ArduinoBoard('COM3')
+    time.sleep(2)
+    arduino.stepper_config(0, FirmataCommands.STEPPER_TYPES['FOUR_WIRE'], 1024, [26,27,28,29])
+
+    for _ in range(20):
+        arduino.stepper_step(0, FirmataCommands.STEPPER_CW, 512, 180)
+        time.sleep(2)
 
 if __name__ == '__main__':
     logger.setLevel(logging.DEBUG)
     logger.addHandler(logging.StreamHandler())
-    test_servo()
+    test_stepper()

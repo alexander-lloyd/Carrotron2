@@ -1,6 +1,8 @@
 from abc import abstractmethod, ABC
 
+
 class FirmataCommands:
+    ACCELSTEPPER_DATA = 0x62
     ANALOG_MAPPING_QUERY = 0x69
     ANALOG_MAPPING_RESPONSE = 0x6A
     ANALOG_MESSAGE = 0xE0
@@ -48,9 +50,14 @@ class FirmataCommands:
     SERIAL_FLUSH = 0x60
     SERIAL_LISTEN = 0x70
     START_SYSEX = 0xF0
+
     STEPPER = 0x72
     STEPPER_CONFIG = 0x00
     STEPPER_STEP = 0x01
+
+    STEPPER_CW = 0x00
+    STEPPER_CCW = 0x01
+
     STRING_DATA = 0x71
     SYSTEM_RESET = 0xFF
 
@@ -74,6 +81,7 @@ class FirmataCommands:
     )
 
     COMMAND_TO_SYSEX = {
+        0x79: "QUERY_FIRMWARE"
     }
 
     COMMAND_TO_HANDLER = {
@@ -82,8 +90,17 @@ class FirmataCommands:
 
     }
 
+    STEPPER_TYPES = {
+        'ONE_WIRE': 1,
+        'TWO_WIRE': 2,
+        # 'THREE_WIRE': 3,
+        'FOUR_WIRE': 4
+    }
+
+
 class Board(ABC):
     """Interface of methods required by sensors"""
+
     @abstractmethod
     def analog_read(self, pin):
         """Read the value of an analogue pin
