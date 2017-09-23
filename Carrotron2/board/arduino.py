@@ -58,7 +58,7 @@ class FirmataUSBSerial(BaseFirmata):
         buffer = []
         while not self.event.is_set():
             buffer_size = self.serial.inWaiting()
-            print("Buffer size: ", buffer_size)
+            # print("Buffer size: ", buffer_size)
             if buffer_size:
                 data_stream = self.serial.read(buffer_size) # TODO: Receive a chunk of data
                 buffer.extend(data_stream)
@@ -96,7 +96,7 @@ class FirmataUSBSerial(BaseFirmata):
                         # We can only process this after we recieved REPORT_VERSION
                         handler(self.currentBuffer)
                     else:
-                        logger.warning("Handler does not exist for sysex {}".format(sysex_command))
+                        logger.warning("Handler does not exist for sysex {}".format(hex(sysex_command)))
 
                     self.currentBuffer.clear()
                 elif first == FirmataCommands.START_SYSEX and len(self.currentBuffer) > 0:
