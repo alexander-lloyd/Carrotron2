@@ -2,3 +2,4 @@ pyserial
 flask
 flask_socketio
 pygame
+pyyaml

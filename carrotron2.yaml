@@ -33,9 +33,9 @@ Robot:
     # web app or controller
 
   sensors:
-#    Ultrasound:
-#      type: "HC-SR04"
-#      pins: [9, 10, 11, 12]
+    Ultrasound:
+      type: "HC-SR04"
+      pins: [8, 9]
     Infrared:
       type: "Sharp 2Y0A02"
       pins: [0]

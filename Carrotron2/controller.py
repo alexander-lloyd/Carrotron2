@@ -1,3 +1,4 @@
+import statistics
 from threading import Thread
 import time, random, threading
 from flask import Flask
@@ -5,6 +6,8 @@ from flask_socketio import SocketIO
 
 import pygame
 from pygame import JOYAXISMOTION, JOYBALLMOTION, JOYBUTTONDOWN, JOYBUTTONUP, JOYHATMOTION
+
+from Carrotron2.output import ServoSG90
 
 pygame.init()
 pygame.joystick.init()
@@ -58,6 +61,7 @@ class WebAppController(Thread):
     def __init__(self, robot):
         super(WebAppController, self).__init__()
         self.robot = robot
+        self.servo = ServoSG90(self.robot.board, [7], reverse=True)
         self.app = Flask(__name__, static_folder='/build')
         self.socketio = SocketIO(self.app)
 
@@ -73,18 +77,17 @@ class WebAppController(Thread):
         return self.app.send_static_file('index.html')
 
     def handle_subscription(self, message):
-        t = set_interval(self.handle_subscription_1, 0.1)
+        t = set_interval(self.handle_subscription_1, 1.85)
         # t.cancel()
 
     def handle_subscription_1(self):
-        data = {
-            90: self.robot.sensors[0].get_distance()
-            # 0: random.randint(500, 700),
-            # 45: random.randint(500, 700),
-            # 90: random.randint(500, 700),
-            # 135: random.randint(500, 700),
-            # 180: random.randint(500, 700)
-        }
+        data = {}
+
+        for angle in range(0, 181, 5):
+            self.servo.set_degrees(angle)
+            data[angle] = statistics.median([self.robot.sensors[0].get_distance() for _ in range(10)])
+            data[angle] = self.robot.sensors[0].get_distance()
+            time.sleep(0.05)
 
         self.socketio.emit("subscribeToData", data=data)
 
