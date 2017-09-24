@@ -6,25 +6,41 @@ const About = () => (
     <div className="App">
     <div className="About">
     <h1>About the project</h1>
-    <p className="App-intro">
-      <b>Carrotron2</b> is a robot that can be driven, instructed to navigate to
-      GPS coordinates, and map its surroundings using ultrasound and infrared
-      scanners.
+    <p className="App-intro justify">
+      <b>Carrotron2</b> is a robot that can use infrared to create a radar of its
+      surroundings. <i>With working motors, we would also have liked to have
+      added pathfinding and GPS support :)</i>
     </p>
     <h3>The robot</h3>
-    <p className="App-intro">
-      The robot is controlled via Raspberry Pi and Arduino units.
-    </p>
-    <h3>Pathfinding</h3>
-    <p className="App-intro">
-      The robot implements the
+    <p className="App-intro justify">
+      The robot is controlled via Raspberry Pi and Arduino units. We have a servo
+      attached to the front, onto which the infrared sensor is mounted, enabling
+      a 180 degree vision for the radar.
     </p>
     <h3>Mapping</h3>
-    <p className="App-intro">
-      Using an ultrasound and an infrared sensor attached to the front of the
-      robot, we are able to obtain estimations of distances to the nearest solid
-      object. By rotating these sensors constantly, we can obtain a live 'radar'
-      of the surroundings.
+    <p className="App-intro justify">
+      Using an infrared sensor attached to the front of the robot, we are able
+      to obtain estimations of distances to the nearest solid object. By
+      rotating these sensors constantly, we can obtain a live 'radar' of the
+      surroundings.
+    </p>
+    <p className="App-intro justify">
+      The infrared sensor is connected to an analogue pin on the <b>Arduino</b>, which
+      can be read via the <b>Raspberry Pi</b>. This gives us a logarithmic value for
+      distance, which we pass to the <b>Flask</b> server and convert to millimeters.
+      Using <b>Socket.IO</b> we can transmit this value via a socket to the <b>React</b> web
+      app, which then finally converts this distance into a pixel representation
+      and draws it on the canvas.
+    </p>
+    <h3><i>Extensions: Pathfinding</i></h3>
+    <p className="App-intro justify">
+      Unfortunately our motors for the wheels do not quite work correctly, so we
+      have been unable to implement any kind of movement on the robot. Once basic
+      movements have been added, it would then be possible to add GPS support using
+      the GPS module for the Arduino.
+    </p>
+    <p className="App-intro justify">
+      Basic pathfinding is possible using the <b><a href="https://www.cs.cmu.edu/~./motionplanning/lecture/Chap2-Bug-Alg_howie.pdf">bug algorithm</a></b>.
     </p>
     </div>
 
