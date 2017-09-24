@@ -58,10 +58,28 @@ class WebAppController(Thread):
         super().__init__()
         self.app = Flask(__name__,static_folder='/build')
         self.socketio = SocketIO(self.app)
+
+        self.app.add_url_rule('/', view_func=self.index_page)
+        self.socketio.on_event("subscribeToData", self.handle_subscription)
+
         self.start()
 
     def run(self):
         self.app.run(host='0.0.0.0', port=3001)
+
+    def index_page(self):
+        return self.app.send_static_file('index.html')
+
+    def handle_subscription(self, message):
+        data = {
+            0: 77,
+            45: 25,
+            90: 75,
+            135: 50,
+            180: 30
+        }
+        self.socketio.emit("subscribeToData", data=data)
+
 
 if __name__ == '__main__':
     # controller = GameController()
