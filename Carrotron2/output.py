@@ -1,9 +1,11 @@
 from Carrotron2.board.base import FirmataCommands
 
+
 class Output:
     def __init__(self, board, pins):
         self.board = board
         self.pins = pins
+
 
 class Servo(Output):
     def __init__(self, board, pins, reverse=False):
@@ -25,6 +27,36 @@ class ServoSG90(Servo):
         if self.reverse:
             degrees = 180 - degrees
         self.board.servo_write(self.pins[0], degrees)
+
+
+class Motor(Output):
+    pass
+
+
+class StepperMotor(Motor):
+    INTERNAL_STEPPER_ID = 0
+
+    def __init__(self, board, pins):
+        super(StepperMotor, self).__init__(board, pins)
+        self.id = StepperMotor.INTERNAL_STEPPER_ID
+        StepperMotor.INTERNAL_STEPPER_ID += 1
+
+
+class ServoULN2003(StepperMotor):
+    def __init__(self, board, pins):
+        super(ServoULN2003, self).__init__(board, pins)
+        if StepperMotor.INTERNAL_STEPPER_ID > 6:  # We've run out of ids!
+            raise Exception("Too Many Stepper Motors!")
+
+        assert len(pins) == 4
+        self.board.stepper_config(self.id,
+                                  FirmataCommands.STEPPER_TYPES['FOUR_WIRE'],
+                                  1024,
+                                  pins
+                                  )
+
+    def step(self, direction, steps, speed):
+        self.board.stepper_step(self.id, direction, steps, speed)
 
 
 if __name__ == '__main__':
