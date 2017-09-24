@@ -72,11 +72,11 @@ class WebAppController(Thread):
 
     def handle_subscription(self, message):
         data = {
-            0: 77,
-            45: 25,
-            90: 75,
-            135: 50,
-            180: 30
+            0: 770,
+            45: 250,
+            90: 750,
+            135: 500,
+            180: 300
         }
         self.socketio.emit("subscribeToData", data=data)
 

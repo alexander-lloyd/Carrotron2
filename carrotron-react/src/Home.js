@@ -11,6 +11,8 @@ class Home extends Component {
     this.drawDir = this.drawDir.bind(this);
     this.drawObject = this.drawObject.bind(this);
     this.sensorPoint = this.sensorPoint.bind(this);
+
+    subscribeToInfrared((err, dict) => this.drawPoints(dict));
   }
 
   componentDidMount() {
@@ -19,7 +21,8 @@ class Home extends Component {
     this.drawBoundary();
     this.drawRobot();
     var bg = this.ctx.getImageData(0, 0, 800, 800);
-    this.drawObject(90, 2.314);
+    //
+    // this.drawObject(90, 20);
   }
 
   drawDir(theta) {
@@ -33,13 +36,18 @@ class Home extends Component {
 
   drawObject(theta, distance) {
     // scale distance into pixels
-    var dist = distance * 210;
-
+    var dist = distance;
     // set size of dot
     var pixelSize = 5;
 
     this.ctx.fillStyle = 'rgb(30, 30, 30)';
     this.ctx.fillRect(400 - dist * Math.cos(theta * Math.PI / 180.0), 610 - dist * Math.sin(theta * Math.PI / 180.0), pixelSize, pixelSize);
+  }
+
+  drawPoints(dict) {
+    Object.entries(dict).map(([degrees, distance]) => {
+      this.drawObject(degrees, distance / 2.0);
+    })
   }
 
   drawRobot() {
