@@ -270,7 +270,15 @@ class ArduinoBoard(Board):
             bool: True for pin value HIGH, False for pin value LOW
 
         """
-        pass
+        pin = self.digital_pins[pin]
+
+        if not pin.reporting:
+            self.__write([
+                FirmataCommands.REPORT_DIGITAL | (pin.pin & 0x0F),
+                FirmataCommands.HIGH
+            ])
+            pin.reporting = True
+        return pin.value
 
     def digital_write(self, pin, value):
         """Set the value of an digital pin
@@ -415,4 +423,4 @@ def test_stepper():
 if __name__ == '__main__':
     logger.setLevel(logging.DEBUG)
     logger.addHandler(logging.StreamHandler())
-    test_read()
+    test_servo()

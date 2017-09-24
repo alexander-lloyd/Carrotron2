@@ -153,3 +153,15 @@ class Board(ABC):
         Returns:
             None
         """
+
+    @abstractmethod
+    def set_pin_mode(self, pin, pin_type):
+        """Set the value of an digital pin
+
+        Args:
+            pin      (int): The pin number
+            pin_type (int): The type of Pin. Defined in FirmataCommands.Modes
+
+        Returns:
+            None
+        """

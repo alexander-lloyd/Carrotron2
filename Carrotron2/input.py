@@ -9,9 +9,6 @@ class Sensor:
 
 
 class InfraRedSensor(Sensor):
-    def __init__(self, board, pins):
-        super(InfraRedSensor, self).__init__(board, pins)
-
     def get_distance(self):
         pass
 
@@ -32,4 +29,3 @@ class InfraRedSensor2Y0A02(InfraRedSensor):
         value = self.raw_data()
         # Function seems to return inches so we convert to mm
         return math.exp(8.5841 - math.log(value))*25.4 # http://forum.arduino.cc/index.php?topic=311356.0
-
