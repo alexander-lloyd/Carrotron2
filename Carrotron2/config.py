@@ -30,7 +30,7 @@ def load_robot_config(filename):
     print(yaml)
     r = Robot()
     robot = yaml['Robot']
-    board = BOARDS.get(robot['board'])('COM3') # TODO
+    board = BOARDS.get(robot['board'])('/dev/tty0') # TODO
     r.add_board(board)
 
     controller = robot['controller']

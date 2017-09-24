@@ -47,6 +47,7 @@ class Home extends Component {
   drawPoints(dict) {
     this.ctx.clearRect(0, 0, 800, 800);
     this.componentDidMount();
+    console.log(dict);
     Object.entries(dict).map(([degrees, distance]) => {
       this.drawObject(degrees, distance / 2.0);
     })

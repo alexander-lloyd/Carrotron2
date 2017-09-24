@@ -78,7 +78,7 @@ class WebAppController(Thread):
 
     def handle_subscription_1(self):
         data = {
-            90: self.robot.sensors[0].distance
+            90: self.robot.sensors[0].get_distance()
             # 0: random.randint(500, 700),
             # 45: random.randint(500, 700),
             # 90: random.randint(500, 700),
