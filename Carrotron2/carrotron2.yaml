@@ -4,28 +4,28 @@ Robot:
     StepperMotor:
       type: "BYJ48"
       driver: "ULN2003"
-    position: (50, ) # find length of robot. Position = -1/2 * length(in mm)
+    position: (90, -60)
     pin: 22
   Wheel:
     diameter: 470
     StepperMotor:
       type: "BYJ48"
       driver: "ULN2003"
-    position: (50, ) # find length of robot. Position = 1/2 * length(in mm)
+    position: (90, 60)
     pin: 23
   Wheel:
     diameter: 470
     StepperMotor:
       type: "BYJ48"
       driver: "ULN2003"
-    position: (-50, ) # find length of robot. Position = -1/2 * length(in mm)
+    position: (-90, -60)
     pin: 24
   Wheel:
     diameter: 470
     StepperMotor:
       type: "BYJ48"
       driver: "ULN2003"
-    position: (-50, ) # find length of robot. Position = 1/2 * length(in mm)
+    position: (-90, 60)
     pin: 25
 
   board: "mega"
