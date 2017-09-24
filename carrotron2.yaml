@@ -4,39 +4,39 @@ Robot:
     StepperMotor:
       type: "BYJ48"
       driver: "ULN2003"
+      pins: [22,23,24,25]
     position: (90, -60)
-    pin: 22
   Wheel:
     diameter: 470
     StepperMotor:
       type: "BYJ48"
       driver: "ULN2003"
+      pins: [26,27,28,29]
     position: (90, 60)
-    pin: 23
   Wheel:
     diameter: 470
     StepperMotor:
       type: "BYJ48"
       driver: "ULN2003"
+      pins: [30,31,32,33]
     position: (-90, -60)
-    pin: 24
   Wheel:
     diameter: 470
     StepperMotor:
       type: "BYJ48"
       driver: "ULN2003"
+      pins: [34,35,36,37]
     position: (-90, 60)
-    pin: 25
 
-  board: "mega"
-  Controllers: ""
+  board: "arduino"
+  controller: "WebApp"
     # web app or controller
 
   sensors:
-    Ultrasound:
-      type: "HC-SR04"
-      pin: [9, 10, 11, 12]
+#    Ultrasound:
+#      type: "HC-SR04"
+#      pins: [9, 10, 11, 12]
     Infrared:
       type: "Sharp 2Y0A02"
-      pin: 0
+      pins: [0]
 

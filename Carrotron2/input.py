@@ -27,10 +27,32 @@ class InfraRedSensor2Y0A02(InfraRedSensor):
     def get_distance(self):
         """Convert to mm"""
         value = self.raw_data()
+        if value == 0:
+            return 999999999 # Large number
         # Function seems to return inches so we convert to mm
         return math.exp(8.5841 - math.log(value))*25.4 # http://forum.arduino.cc/index.php?topic=311356.0
 
 
+class UltrasoundSensor(Sensor):
+    pass
+
+class UltrasoundSensorHCSR04(UltrasoundSensor):
+    pass
+
+
 INPUTS = {
-    "2Y0A02": InfraRedSensor2Y0A02,
+    "HC-SR04": UltrasoundSensorHCSR04,
+    "Sharp 2Y0A02": InfraRedSensor2Y0A02,
 }
+
+if __name__ == '__main__':
+    import time
+
+    from Carrotron2.board.arduino import ArduinoBoard
+
+    board = ArduinoBoard('COM3')
+    sensor = InfraRedSensor2Y0A02(board, [0])
+
+    while True:
+        print(sensor.get_distance())
+        time.sleep(1)

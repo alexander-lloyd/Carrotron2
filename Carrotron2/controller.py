@@ -21,11 +21,12 @@ class ControllerObserver:
 
 
 class GameController(Thread):
-    def __init__(self):
+    def __init__(self, robot):
         super(GameController, self).__init__()
         self.running = True
         self.__listeners = []
         self.joysticks = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_count())]
+        self.robot = robot
         self.start()
 
     def run(self):
@@ -54,9 +55,10 @@ class GameController(Thread):
 
 
 class WebAppController(Thread):
-    def __init__(self):
-        super().__init__()
-        self.app = Flask(__name__,static_folder='/build')
+    def __init__(self, robot):
+        super(WebAppController, self).__init__()
+        self.robot = robot
+        self.app = Flask(__name__, static_folder='/build')
         self.socketio = SocketIO(self.app)
 
         self.app.add_url_rule('/', view_func=self.index_page)
@@ -72,14 +74,15 @@ class WebAppController(Thread):
 
     def handle_subscription(self, message):
         data = {
-            0: 77,
-            45: 25,
-            90: 75,
-            135: 50,
-            180: 30
+            90: self.robot.sensors[0].distance
         }
         self.socketio.emit("subscribeToData", data=data)
 
+
+CONTROLLERS = {
+    'WebApp': WebAppController,
+    'USBController': GameController
+}
 
 if __name__ == '__main__':
     # controller = GameController()
