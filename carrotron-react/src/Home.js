@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import './App.css';
+import { subscribeToInfrared } from './api';
 
 class Home extends Component {
   constructor() {
