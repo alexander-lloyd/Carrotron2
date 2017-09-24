@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import './App.css';
+import { subscribeToInfrared } from './api';
 
 class Home extends Component {
   constructor() {
@@ -10,6 +11,8 @@ class Home extends Component {
     this.drawDir = this.drawDir.bind(this);
     this.drawObject = this.drawObject.bind(this);
     this.sensorPoint = this.sensorPoint.bind(this);
+
+    subscribeToInfrared((err, dict) => this.drawPoints(dict));
   }
 
   componentDidMount() {
@@ -17,8 +20,9 @@ class Home extends Component {
     this.ctx = canvas.getContext('2d');
     this.drawBoundary();
     this.drawRobot();
-    var bg = this.ctx.getImageData(0, 0, 800, 800);
-    this.drawObject(90, 2.314);
+    // var bg = this.ctx.getImageData(0, 0, 800, 800);
+    //
+    // this.drawObject(90, 20);
   }
 
   drawDir(theta) {
@@ -32,13 +36,20 @@ class Home extends Component {
 
   drawObject(theta, distance) {
     // scale distance into pixels
-    var dist = distance * 210;
-
+    var dist = distance;
     // set size of dot
-    var pixelSize = 5;
+    var pixelSize = 8;
 
     this.ctx.fillStyle = 'rgb(30, 30, 30)';
     this.ctx.fillRect(400 - dist * Math.cos(theta * Math.PI / 180.0), 610 - dist * Math.sin(theta * Math.PI / 180.0), pixelSize, pixelSize);
+  }
+
+  drawPoints(dict) {
+    this.ctx.clearRect(0, 0, 800, 800);
+    this.componentDidMount();
+    Object.entries(dict).map(([degrees, distance]) => {
+      this.drawObject(degrees, distance / 2.0);
+    })
   }
 
   drawRobot() {
@@ -49,6 +60,10 @@ class Home extends Component {
   drawBoundary() {
     this.ctx.fillStyle = 'rgb(200,200,200)';
     this.ctx.fillRect(0, 620, 800, 180);
+    this.ctx.fillStyle = 'rgb(55,55,55)';
+    this.ctx.fillRect(10, 640, 50, 5);
+    this.ctx.font = "20px Arial";
+    this.ctx.fillText("10cm", 10, 670);
   }
 
   sensorPoint(theta) {
