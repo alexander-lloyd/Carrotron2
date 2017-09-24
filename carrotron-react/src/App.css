@@ -1,0 +1,47 @@
+.App {
+  text-align: center;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.element {
+  font-family: 'Open Sans', sans-serif;
+}
+
+.App-logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 80px;
+}
+
+.App-header {
+  background-color: #222;
+  height: 150px;
+  padding: 20px;
+  color: white;
+}
+
+.App-intro {
+  font-size: large;
+}
+
+.About {
+  width: 700px;
+  margin: auto;
+}
+
+.cards {
+  width: 700px;
+  margin: auto;
+}
+
+nav .brand-logo {
+  margin-left: 20px;
+}
+
+nav ul {
+  margin-right: 20px;
+}
+
+@keyframes App-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
