@@ -1,0 +1,42 @@
+Robot:
+  Wheel:
+    diameter: 470
+    StepperMotor:
+      type: "BYJ48"
+      driver: "ULN2003"
+    position: (90, -60)
+    pin: 22
+  Wheel:
+    diameter: 470
+    StepperMotor:
+      type: "BYJ48"
+      driver: "ULN2003"
+    position: (90, 60)
+    pin: 23
+  Wheel:
+    diameter: 470
+    StepperMotor:
+      type: "BYJ48"
+      driver: "ULN2003"
+    position: (-90, -60)
+    pin: 24
+  Wheel:
+    diameter: 470
+    StepperMotor:
+      type: "BYJ48"
+      driver: "ULN2003"
+    position: (-90, 60)
+    pin: 25
+
+  board: "mega"
+  Controllers: ""
+    # web app or controller
+
+  sensors:
+    Ultrasound:
+      type: "HC-SR04"
+      pin: [9, 10, 11, 12]
+    Infrared:
+      type: "Sharp 2Y0A02"
+      pin: 0
+
