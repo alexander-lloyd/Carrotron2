@@ -1,5 +1,5 @@
 from threading import Thread
-import time
+import time, random, threading
 from flask import Flask
 from flask_socketio import SocketIO
 
@@ -71,15 +71,27 @@ class WebAppController(Thread):
         return self.app.send_static_file('index.html')
 
     def handle_subscription(self, message):
+        t = set_interval(self.handle_subscription_1, 0.1)
+        # t.cancel()
+
+    def handle_subscription_1(self):
         data = {
-            0: 770,
-            45: 250,
-            90: 750,
-            135: 500,
-            180: 300
+            0: random.randint(500, 700),
+            45: random.randint(500, 700),
+            90: random.randint(500, 700),
+            135: random.randint(500, 700),
+            180: random.randint(500, 700)
         }
+
         self.socketio.emit("subscribeToData", data=data)
 
+def set_interval(func, sec):
+    def func_wrapper():
+        set_interval(func, sec)
+        func()
+    t = threading.Timer(sec, func_wrapper)
+    t.start()
+    return t
 
 if __name__ == '__main__':
     # controller = GameController()
