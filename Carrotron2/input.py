@@ -29,3 +29,8 @@ class InfraRedSensor2Y0A02(InfraRedSensor):
         value = self.raw_data()
         # Function seems to return inches so we convert to mm
         return math.exp(8.5841 - math.log(value))*25.4 # http://forum.arduino.cc/index.php?topic=311356.0
+
+
+INPUTS = {
+    "2Y0A02": InfraRedSensor2Y0A02,
+}

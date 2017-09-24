@@ -42,10 +42,11 @@ class StepperMotor(Motor):
         StepperMotor.INTERNAL_STEPPER_ID += 1
 
 
-class ServoULN2003(StepperMotor):
+class StepperMotorULN2003(StepperMotor):
     def __init__(self, board, pins):
-        super(ServoULN2003, self).__init__(board, pins)
+        super(StepperMotorULN2003, self).__init__(board, pins)
         if StepperMotor.INTERNAL_STEPPER_ID > 6:  # We've run out of ids!
+            # TODO: Dont hard encode the maximum values. Depends on the stepper implementation
             raise Exception("Too Many Stepper Motors!")
 
         assert len(pins) == 4
@@ -57,6 +58,13 @@ class ServoULN2003(StepperMotor):
 
     def step(self, direction, steps, speed):
         self.board.stepper_step(self.id, direction, steps, speed)
+
+
+OUTPUTS = {
+    "SG90": ServoSG90,
+    "ULN2003": StepperMotorULN2003
+}
+
 
 
 if __name__ == '__main__':
