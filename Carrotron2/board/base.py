@@ -81,6 +81,7 @@ class FirmataCommands:
     )
 
     COMMAND_TO_SYSEX = {
+        0x72: "STEPPER",
         0x79: "QUERY_FIRMWARE"
     }
 
