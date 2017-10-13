@@ -148,6 +148,12 @@ class FirmataUSBSerial(BaseFirmata):
 
         self.board.analog_pins[pin].value = value
 
+    def handle_sysex_QUERY_FIRMWARE(self, buffer):
+        logger.info("Query Firmware Buffer? {}".format(buffer))
+
+    def handle_sysex_STEPPER(self, buffer):
+        logger.info("Stepper Buffer? {}".format(buffer))
+
 
 
 class FirmataSocket(BaseFirmata):
@@ -423,4 +429,4 @@ def test_stepper():
 if __name__ == '__main__':
     logger.setLevel(logging.DEBUG)
     logger.addHandler(logging.StreamHandler())
-    test_servo()
+    test_stepper()
