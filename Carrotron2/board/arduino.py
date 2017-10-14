@@ -57,7 +57,11 @@ class FirmataUSBSerial(BaseFirmata):
         logger.debug("Stream Opened on port: {port}".format(port=self.address))
         buffer = []
         while not self.event.is_set():
-            buffer_size = self.serial.inWaiting()
+            try:
+                buffer_size = self.serial.inWaiting()
+            except OSError as e:
+                buffer_size = 0
+                logger.error("OSError caused by: {e}".format(e=e))
             # print("Buffer size: ", buffer_size)
             if buffer_size:
                 data_stream = self.serial.read(buffer_size) # TODO: Receive a chunk of data
