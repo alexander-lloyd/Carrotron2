@@ -39,4 +39,3 @@ Robot:
 #    Ultrasound:
 #      type: "HC-SR04"
 #      pins: [8, 9]
-
