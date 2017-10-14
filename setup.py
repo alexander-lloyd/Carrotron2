@@ -8,6 +8,10 @@ from setuptools import setup, find_packages
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
+
+with open('requirements.txt') as f:
+    required = f.read().splitlines()
+
 setup(
     name = "Carrotron2",
     version = "0.0.2",
@@ -17,6 +21,7 @@ setup(
     keywords = "Robotics",
     url = "https://github.com/alexander-lloyd/Carrotron2.git",
     packages=find_packages(),
+    install_requires=required,
     long_description=read('README.md'),
     classifiers=[
         "Development Status :: 3 - Alpha",
