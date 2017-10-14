@@ -27,4 +27,4 @@ class DifferentialPilot:
 
     def set_rotation_speed(self, rotation_speed):
         self.leftmotor.speed = rotation_speed
-        self.rightmotor.speed =
+        self.rightmotor.speed = - rotation_speed
