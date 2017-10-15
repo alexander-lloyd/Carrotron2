@@ -103,6 +103,13 @@ class MotorDriveL9110(Motor):
         self.board.analog_write(self.motor_outputs['inputA'], 0)
         self.board.analog_write(self.motor_outputs['inputB'], 0)
 
+    def __update_direction(self, direction):
+        if self._direction != direction:
+            if direction == MotorDriveL9110.FORWARDS:
+                self.forward()
+            else:
+                self.backwards()
+            self._direction = direction
 
     @property
     def speed(self):
@@ -114,11 +121,13 @@ class MotorDriveL9110(Motor):
 
 
         if speed > 0:
-            self._direction = MotorDriveL9110.FORWARDS
+            self.__update_direction(MotorDriveL9110.FORWARDS)
             self.board.analog_write(self.motor_outputs['inputA'], self._speed)
         else:
-            self._direction = MotorDriveL9110.BACKWARDS
+            self.__update_direction(MotorDriveL9110.BACKWARDS)
             self.board.analog_write(self.motor_outputs['inputB'], self._speed)
+
+
 
 
 
